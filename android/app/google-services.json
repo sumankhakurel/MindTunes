@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "588837690599",
+    "project_id": "mindtunes-336de",
+    "storage_bucket": "mindtunes-336de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588837690599:android:b6903824010e6d0ff71642",
+        "android_client_info": {
+          "package_name": "com.example.mindtunes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEasuR4uP0UhCKR-Ze0Pra8xLspXTloTs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
