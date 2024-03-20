@@ -8,6 +8,7 @@ import 'package:mindtunes/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mindtunes/features/auth/presentation/pages/login_page.dart';
 import 'package:mindtunes/features/auth/presentation/widgets/auth_field.dart';
 import 'package:mindtunes/features/auth/presentation/widgets/auth_gradient_button.dart';
+import 'package:mindtunes/nav_bar.dart';
 
 class SignUpPage extends StatefulWidget {
   static route() => MaterialPageRoute(builder: (context) => const SignUpPage());
@@ -42,6 +43,9 @@ class _SignUpPageState extends State<SignUpPage> {
             listener: (context, state) {
               if (state is AuthFailure) {
                 showSnackBar(context, state.message);
+              } else if (state is AuthSuccess) {
+                Navigator.pushAndRemoveUntil(
+                    context, NavBar.route(), (route) => false);
               }
             },
             builder: (context, state) {

@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
+import 'package:mindtunes/core/utils/show_snacksbar.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/bloc/bluetooth_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/chart.dart';
 
 class Dashboard extends StatelessWidget {
@@ -73,12 +77,34 @@ class Dashboard extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5.0)),
                             ),
-                            child: const Text(
-                              "Connect Your Device",
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: BlocConsumer<BluetoothBloc, BluetoothState>(
+                              listener: (context, state) {
+                                if (state is BluetoothFailure) {
+                                  showSnackBar(context, state.message);
+                                } else if (state is BluetoothSucess) {
+                                  print("Sucessd");
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is BluetoothLoading) {
+                                  return const Loader();
+                                }
+                                return GestureDetector(
+                                  onTap: () {
+                                    print("taped");
+                                    context
+                                        .read<BluetoothBloc>()
+                                        .add(Bluconnect());
+                                  },
+                                  child: const Text(
+                                    "Connect Your Device",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ],

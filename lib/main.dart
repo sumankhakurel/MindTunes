@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/bloc/bluetooth_bloc.dart';
 import 'package:mindtunes/nav_bar.dart';
 
 import 'package:mindtunes/core/theme/theme.dart';
@@ -18,6 +19,9 @@ void main() async {
       ),
       BlocProvider(
         create: (_) => serviceLocator<AuthBloc>(),
+      ),
+      BlocProvider(
+        create: (_) => serviceLocator<BluetoothBloc>(),
       ),
     ],
     child: const MyApp(),
@@ -50,6 +54,7 @@ class _MyAppState extends State<MyApp> {
         },
         builder: (context, isLoggedIn) {
           if (isLoggedIn) {
+            print("Hello");
             return const NavBar();
           }
           return const LoginPage();

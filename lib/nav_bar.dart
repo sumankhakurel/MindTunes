@@ -7,6 +7,10 @@ import 'package:mindtunes/features/meditation/presentation/pages/dashboard.dart'
 import 'package:mindtunes/features/meditation/presentation/pages/meditation.dart';
 
 class NavBar extends StatefulWidget {
+  static PageRoute route() {
+    return MaterialPageRoute(builder: (_) => NavBar());
+  }
+
   const NavBar({super.key});
 
   @override
