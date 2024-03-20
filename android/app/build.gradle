@@ -65,4 +65,14 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+rootProject.allprojects {
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
