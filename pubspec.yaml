@@ -46,8 +46,9 @@ dependencies:
   intl: ^0.19.0
   fl_chart: ^0.66.2
   syncfusion_flutter_charts: ^25.1.35
-  flutter_blue: ^0.8.0
   permission_handler: ^11.3.0
+  flutter_blue: ^0.8.0
+
 
 dev_dependencies:
   flutter_test:
@@ -65,9 +66,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  plugin:
-    androidPackage: com.example.fluttermindwavemobile2
-    pluginClass: FlutterMindWaveMobile2Plugin
+  
+    
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

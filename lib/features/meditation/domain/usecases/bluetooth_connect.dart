@@ -10,6 +10,6 @@ class BluetoothConnect implements UseCase<String, NoParams> {
 
   @override
   Future<Either<Failure, String>> call(NoParams params) async {
-    return bluetoothRepository.connectToBluetooth();
+    return await bluetoothRepository.connectToBluetooth();
   }
 }

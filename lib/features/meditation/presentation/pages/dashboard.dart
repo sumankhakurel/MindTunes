@@ -12,6 +12,7 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var bluStatus = false;
     return Scaffold(
       backgroundColor: AppPallete.navColour,
       body: Padding(
@@ -81,8 +82,9 @@ class Dashboard extends StatelessWidget {
                               listener: (context, state) {
                                 if (state is BluetoothFailure) {
                                   showSnackBar(context, state.message);
+                                  bluStatus = false;
                                 } else if (state is BluetoothSucess) {
-                                  print("Sucessd");
+                                  bluStatus = true;
                                 }
                               },
                               builder: (context, state) {
@@ -91,13 +93,18 @@ class Dashboard extends StatelessWidget {
                                 }
                                 return GestureDetector(
                                   onTap: () {
-                                    print("taped");
-                                    context
-                                        .read<BluetoothBloc>()
-                                        .add(Bluconnect());
+                                    if (!bluStatus) {
+                                      context
+                                          .read<BluetoothBloc>()
+                                          .add(Bluconnect());
+                                    } else {
+                                      //disconnect bloc
+                                    }
                                   },
-                                  child: const Text(
-                                    "Connect Your Device",
+                                  child: Text(
+                                    bluStatus
+                                        ? "Connected"
+                                        : "Connect To Your Device",
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,

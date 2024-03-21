@@ -19,13 +19,13 @@ import 'package:mindtunes/features/meditation/data/repository/bluetooth_reposito
 import 'package:mindtunes/features/meditation/domain/repository/bluetooth_repository.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/bluetooth_connect.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/bloc/bluetooth_bloc.dart';
-import 'package:mindtunes/features/meditation/utils/flutter_mindwave_mobile_2.dart';
 import 'package:mindtunes/firebase_options.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependicies() async {
   _initAuth();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   //core
@@ -68,7 +68,6 @@ void _initAuth() {
     ..registerFactory<BluetoothDataSource>(
       () => BluetoothDataSourceImpl(
         FlutterBlue.instance,
-        FlutterMindWaveMobile2(),
       ),
     )
     ..registerFactory<BluetoothRepository>(

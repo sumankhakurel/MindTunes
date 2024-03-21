@@ -14,6 +14,7 @@ class BluetoothRepositoryImpl implements BluetoothRepository {
       final result = await bluetoothDataSource.bluetoothConnect();
       return right(result);
     } on ServerException catch (e) {
+      print(e.message);
       return left(Failure(e.message));
     }
   }
