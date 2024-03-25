@@ -59,19 +59,20 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    sourceSets.main {
+        jniLibs.srcDir 'libs'
+        jni.srcDirs = []
+    }
+
+
+
 }
 
 flutter {
     source '../..'
 }
 
-rootProject.allprojects {
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-    }
-}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

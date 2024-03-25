@@ -1,4 +1,4 @@
-package com.example.fluttermindwavemobile2;
+package com.example.mindtunes;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -32,30 +32,35 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+
+import io.flutter.embedding.android.FlutterActivity;
 
 /** FlutterMindWaveMobile2Plugin */
-public class FlutterMindWaveMobile2Plugin implements MethodCallHandler {
+public class FlutterMindWaveMobile2Plugin implements FlutterPlugin, MethodCallHandler {
 
   private static final String TAG = "MindWaveMobile2";
   private static final String NAMESPACE = "flutter_mindwave_mobile_2";
 
-  private final MethodChannel connectionChannel;
-  private final EventChannel algoStateAndReasonChannel;
-  private final EventChannel attentionChannel;
-  private final EventChannel bandPowerChannel;
-  private final EventChannel eyeBlinkChannel;
-  private final EventChannel meditationChannel;
-  private final EventChannel signalQualityChannel;
+  private MethodChannel connectionChannel;
+  private EventChannel algoStateAndReasonChannel;
+  private EventChannel attentionChannel;
+  private EventChannel bandPowerChannel;
+  private EventChannel eyeBlinkChannel;
+  private EventChannel meditationChannel;
+  private EventChannel signalQualityChannel;
 
-  private final BluetoothManager mBluetoothManager;
+  private BluetoothManager mBluetoothManager;
   private BluetoothAdapter mBluetoothAdapter;
 
   private TgStreamReader mTgStreamReader;
+
+  
   private NskAlgoSdk nskAlgoSdk;
   private short raw_data[] = new short[512];
   private int raw_data_index =  0;
+  
 
   private TgStreamHandler callback = new TgStreamHandler() {
 
@@ -202,16 +207,19 @@ public class FlutterMindWaveMobile2Plugin implements MethodCallHandler {
   };
 
 
-  FlutterMindWaveMobile2Plugin(Registrar registrar) {
-    this.connectionChannel = new MethodChannel(registrar.messenger(), NAMESPACE + "/connection");
-    this.algoStateAndReasonChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/algoStateAndReason");
-    this.attentionChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/attention");
-    this.bandPowerChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/bandPower");
-    this.eyeBlinkChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/eyeBlink");
-    this.meditationChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/meditation");
-    this.signalQualityChannel = new EventChannel(registrar.messenger(), NAMESPACE+"/signalQuality");
-    this.mBluetoothManager = (BluetoothManager) registrar.activity().getSystemService(Context.BLUETOOTH_SERVICE);
-    this.mBluetoothAdapter = mBluetoothManager.getAdapter();
+  @Override
+  public void onAttachedToEngine(FlutterPluginBinding binding) {
+    Log.d(TAG, "onAttachedToEngine: Invoked");
+    BinaryMessenger messenger = binding.getBinaryMessenger();
+    connectionChannel = new MethodChannel(messenger, NAMESPACE + "/connection");
+    algoStateAndReasonChannel = new EventChannel(messenger, NAMESPACE+"/algoStateAndReason");
+    attentionChannel = new EventChannel(messenger, NAMESPACE+"/attention");
+    bandPowerChannel = new EventChannel(messenger, NAMESPACE+"/bandPower");
+    eyeBlinkChannel = new EventChannel(messenger, NAMESPACE+"/eyeBlink");
+    meditationChannel = new EventChannel(messenger, NAMESPACE+"/meditation");
+    signalQualityChannel = new EventChannel(messenger, NAMESPACE+"/signalQuality");
+    mBluetoothManager = (BluetoothManager) binding.getApplicationContext().getSystemService(Context.BLUETOOTH_SERVICE);
+    mBluetoothAdapter = mBluetoothManager.getAdapter();
     connectionChannel.setMethodCallHandler(this);
     algoStateAndReasonChannel.setStreamHandler(algoStateAndReasonChannelHandler);
     attentionChannel.setStreamHandler(attentionChannelHandler);
@@ -219,12 +227,8 @@ public class FlutterMindWaveMobile2Plugin implements MethodCallHandler {
     eyeBlinkChannel.setStreamHandler(eyeBlinkChannelHandler);
     meditationChannel.setStreamHandler(meditationChannelHandler);
     signalQualityChannel.setStreamHandler(signalQualityChannelHandler);
+    
     setupNskAlgoSk();
-  }
-
-  /** Plugin registration. */
-  public static void registerWith(Registrar registrar) {
-    new FlutterMindWaveMobile2Plugin(registrar);
   }
 
   @Override
@@ -232,7 +236,9 @@ public class FlutterMindWaveMobile2Plugin implements MethodCallHandler {
     try {
       switch(call.method)
       {
+       
         case "connect":
+       
           String deviceId = call.argument("deviceId");
           connect(deviceId);
           result.success(null);
@@ -247,6 +253,11 @@ public class FlutterMindWaveMobile2Plugin implements MethodCallHandler {
     } catch (Exception error) {
       result.error(error.getLocalizedMessage(), error.getStackTrace().toString(), null);
     }
+  }
+
+  @Override
+  public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    connectionChannel.setMethodCallHandler(null);
   }
 
   private void connect(String deviceId) {
