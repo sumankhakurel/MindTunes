@@ -1,10 +1,10 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mindtunes/core/error/failure.dart';
 import 'package:mindtunes/core/usecase/usecase.dart';
-import 'package:mindtunes/features/meditation/domain/repository/bluetooth_repository.dart';
+import 'package:mindtunes/features/meditation/domain/repository/mindwave_repository.dart';
 
 class BluetoothConnect implements UseCase<String, NoParams> {
-  final BluetoothRepository bluetoothRepository;
+  final MindwaveRepository bluetoothRepository;
 
   BluetoothConnect(this.bluetoothRepository);
 

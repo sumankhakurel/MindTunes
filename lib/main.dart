@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/bluetooth_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
+
 import 'package:mindtunes/nav_bar.dart';
 
 import 'package:mindtunes/core/theme/theme.dart';
@@ -21,7 +22,7 @@ void main() async {
         create: (_) => serviceLocator<AuthBloc>(),
       ),
       BlocProvider(
-        create: (_) => serviceLocator<BluetoothBloc>(),
+        create: (_) => serviceLocator<MindwaveBloc>(),
       ),
     ],
     child: const MyApp(),

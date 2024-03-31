@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/core/utils/show_snacksbar.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/bluetooth_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/chart.dart';
 
 class Dashboard extends StatelessWidget {
@@ -12,7 +12,8 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bluStatus = false;
+    var bluStatus = "Connect To Device";
+    var data = 0;
     return Scaffold(
       backgroundColor: AppPallete.navColour,
       body: Padding(
@@ -78,33 +79,31 @@ class Dashboard extends StatelessWidget {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5.0)),
                             ),
-                            child: BlocConsumer<BluetoothBloc, BluetoothState>(
+                            child: BlocConsumer<MindwaveBloc, MindwaveState>(
                               listener: (context, state) {
-                                if (state is BluetoothFailure) {
+                                if (state is MindwaveFailure) {
                                   showSnackBar(context, state.message);
-                                  bluStatus = false;
-                                } else if (state is BluetoothSucess) {
-                                  bluStatus = true;
+                                  bluStatus = "Connect To Device";
+                                } else if (state is MindwaveSucess) {
+                                  bluStatus = state.message;
                                 }
                               },
                               builder: (context, state) {
-                                if (state is BluetoothLoading) {
+                                if (state is MindwaveLoading) {
                                   return const Loader();
                                 }
                                 return GestureDetector(
                                   onTap: () {
-                                    if (!bluStatus) {
+                                    if (bluStatus != "connected") {
                                       context
-                                          .read<BluetoothBloc>()
+                                          .read<MindwaveBloc>()
                                           .add(Bluconnect());
                                     } else {
                                       //disconnect bloc
                                     }
                                   },
                                   child: Text(
-                                    bluStatus
-                                        ? "Connected"
-                                        : "Connect To Your Device",
+                                    bluStatus,
                                     style: TextStyle(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,
@@ -201,6 +200,32 @@ class Dashboard extends StatelessWidget {
                               ),
                               Divider(),
                               Text("Band Power"),
+                              BlocConsumer<MindwaveBloc, MindwaveState>(
+                                listener: (context, state) {
+                                  if (state is MindwaveDataSuccess) {
+                                    data = state.data;
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is MindwaveLoading) {
+                                    return const Loader();
+                                  }
+                                  return GestureDetector(
+                                    onTap: () {
+                                      context
+                                          .read<MindwaveBloc>()
+                                          .add(GetRawSignal());
+                                    },
+                                    child: Text(
+                                      data.toString(),
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                               CustomLineChart(),
                             ],
                           ),

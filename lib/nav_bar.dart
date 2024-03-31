@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/features/auth/presentation/pages/profile.dart';
 import 'package:mindtunes/features/meditation/presentation/pages/dashboard.dart';
-import 'package:mindtunes/features/meditation/presentation/pages/meditation.dart';
 
 class NavBar extends StatefulWidget {
   static PageRoute route() {
@@ -57,7 +56,7 @@ class _NavBarState extends State<NavBar> {
         widget = Dashboard();
         break;
       case 2:
-        widget = Meditation();
+        widget = Dashboard();
         break;
       default:
         widget = Dashboard();

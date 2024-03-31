@@ -60,10 +60,7 @@ android {
         }
     }
 
-    sourceSets.main {
-        jniLibs.srcDir 'libs'
-        jni.srcDirs = []
-    }
+   
 
 
 
@@ -74,6 +71,3 @@ flutter {
 }
 
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
