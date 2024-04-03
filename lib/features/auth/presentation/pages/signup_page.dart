@@ -21,6 +21,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final repasswordController = TextEditingController();
   final nameController = TextEditingController();
   final formkey = GlobalKey<FormState>();
 
@@ -29,6 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    repasswordController.dispose();
     super.dispose();
   }
 
@@ -70,6 +72,12 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Name",
                       controller: nameController,
                       action: TextInputAction.next,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please enter Name";
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 15),
                     AuthField(
@@ -77,6 +85,16 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Email",
                       controller: emailController,
                       action: TextInputAction.next,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please Enter Email";
+                        } else if (!RegExp(
+                                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                            .hasMatch(value)) {
+                          return "Please enter valid email";
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 15),
                     AuthField(
@@ -84,7 +102,36 @@ class _SignUpPageState extends State<SignUpPage> {
                       hintText: "Password",
                       controller: passwordController,
                       isObsecuteText: true,
+                      action: TextInputAction.next,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Password is missing!";
+                        } else if (value.length < 5) {
+                          return "Minimum password length is 5";
+                        } else if (!RegExp(r'^(?=.*[a-zA-Z])(?=.*\d).{6,}$')
+                            .hasMatch(value)) {
+                          return "Password must contain at least 1 alphabet and number";
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    AuthField(
+                      icon: const Icon(CupertinoIcons.lock),
+                      hintText: "Re-Password",
+                      controller: repasswordController,
+                      isObsecuteText: true,
                       action: TextInputAction.done,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Re-Password is missing!";
+                        } else if (value.length < 5) {
+                          return "Minimum password length is 5";
+                        } else if (value != passwordController.text) {
+                          return "Password do not match";
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 20),
                     AuthGradientButton(

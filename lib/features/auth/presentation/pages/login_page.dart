@@ -5,6 +5,7 @@ import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/core/utils/show_snacksbar.dart';
 import 'package:mindtunes/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:mindtunes/features/auth/presentation/pages/reset_password.dart';
 import 'package:mindtunes/features/auth/presentation/pages/signup_page.dart';
 import 'package:mindtunes/features/auth/presentation/widgets/auth_field.dart';
 import 'package:mindtunes/features/auth/presentation/widgets/auth_gradient_button.dart';
@@ -66,6 +67,16 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: "Email",
                     controller: emailController,
                     action: TextInputAction.next,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Please Enter Email";
+                      } else if (!RegExp(
+                              r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+                          .hasMatch(value)) {
+                        return "Please enter valid email";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 15),
                   AuthField(
@@ -74,6 +85,14 @@ class _LoginPageState extends State<LoginPage> {
                     controller: passwordController,
                     isObsecuteText: true,
                     action: TextInputAction.done,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Password is missing!";
+                      } else if (value.length < 5) {
+                        return "Minimum password length is 5";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 20),
                   AuthGradientButton(
@@ -82,8 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                       if (formkey.currentState!.validate()) {
                         context.read<AuthBloc>().add(
                               AuthLogin(
-                                  email: emailController.text,
-                                  password: passwordController.text),
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text.trim()),
                             );
                       }
                     },
@@ -111,6 +130,18 @@ class _LoginPageState extends State<LoginPage> {
                           ]),
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  GestureDetector(
+                    child: Text(
+                      "Forgot Password?",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppPallete.errorColor,
+                          ),
+                    ),
+                    onTap: () {
+                      Navigator.push(context, ResetPassword.route());
+                    },
+                  )
                 ],
               ),
             );

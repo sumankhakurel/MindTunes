@@ -14,6 +14,14 @@ final class AuthSuccess extends AuthState {
   const AuthSuccess(this.user);
 }
 
+final class AuthSucess2 extends AuthState {}
+
+final class AuthSuccess1 extends AuthState {
+  final String message;
+
+  const AuthSuccess1(this.message);
+}
+
 final class AuthFailure extends AuthState {
   final String message;
   const AuthFailure(this.message);

@@ -15,4 +15,11 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUser();
   Future<UserModel> getUserData({required String uid});
   Future<void> logout();
+  Future<void> deleteAccount({
+    required String email,
+    required String password,
+  });
+  Future<void> resetPassword({
+    required String email,
+  });
 }

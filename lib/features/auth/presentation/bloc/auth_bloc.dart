@@ -4,7 +4,9 @@ import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/core/usecase/usecase.dart';
 import 'package:mindtunes/core/common/entities/user.dart';
 import 'package:mindtunes/features/auth/domain/usecases/current_user.dart';
+import 'package:mindtunes/features/auth/domain/usecases/delete_account.dart';
 import 'package:mindtunes/features/auth/domain/usecases/logout.dart';
+import 'package:mindtunes/features/auth/domain/usecases/reset_password.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_login.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_sign_up.dart';
 
@@ -17,17 +19,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final CurrentUser _currentUser;
   final AppUserCubit _appUserCubit;
   final Logout _logout;
+  final DeleteAccount _deleteAccount;
+  final ResetPassword _resetPassword;
   AuthBloc({
     required UserSignUp userSignup,
     required UserLogin userLogin,
     required CurrentUser currentUser,
     required AppUserCubit appUserCubit,
     required Logout logout,
+    required DeleteAccount deleteAccount,
+    required ResetPassword resetPassword,
   })  : _userSignUp = userSignup,
         _userLogin = userLogin,
         _currentUser = currentUser,
         _appUserCubit = appUserCubit,
         _logout = logout,
+        _deleteAccount = deleteAccount,
+        _resetPassword = resetPassword,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
 
@@ -35,7 +43,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final res = await _logout(NoParams());
       res.fold(
         (l) => emit(AuthFailure(l.message)),
-        (user) => emit(AuthSuccess(user)),
+        (r) => emit(AuthSuccess1(r)),
+      );
+    });
+
+    on<DeleteUser>((event, emit) async {
+      final res = await _deleteAccount(UserLoginParms(
+        email: event.email,
+        password: event.password,
+      ));
+      res.fold(
+        (l) => emit(AuthFailure(l.message)),
+        (r) => emit(AuthSuccess1(r)),
+      );
+    });
+
+    on<AuthResetPassword>((event, emit) async {
+      final res = await _resetPassword(event.email);
+      res.fold(
+        (l) => emit(AuthFailure(l.message)),
+        (r) => emit(AuthSuccess1(r)),
       );
     });
 

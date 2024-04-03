@@ -55,8 +55,33 @@ class AuthReposotoriesImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, User>> logout() async {
-    await remoteDataSource.logout();
-    return getUserStatus();
+  Future<Either<Failure, String>> logout() async {
+    try {
+      await remoteDataSource.logout();
+      return right("Logout");
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteAccount(
+      {required String email, required String password}) async {
+    try {
+      await remoteDataSource.deleteAccount(email: email, password: password);
+      return right("Account Deleted");
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPasword({required String email}) async {
+    try {
+      await remoteDataSource.resetPassword(email: email);
+      return right("Password Resete");
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
   }
 }

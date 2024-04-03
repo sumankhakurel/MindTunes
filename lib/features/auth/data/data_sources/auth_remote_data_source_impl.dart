@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 import 'package:mindtunes/core/error/exceptions.dart';
 import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:mindtunes/features/auth/data/models/user_model.dart';
@@ -19,6 +20,7 @@ class AuthRemoteSourceImpl implements AuthRemoteDataSource {
           email: email, password: password);
 
       if (response.user == null) {
+        print("User is null");
         throw const ServerException("User is null");
       }
 
@@ -38,7 +40,14 @@ class AuthRemoteSourceImpl implements AuthRemoteDataSource {
         throw const ServerException("User Data not found");
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      if (e is FirebaseAuthException && e.code == 'invalid-credential') {
+        throw const ServerException("Wrong Email or Password");
+      } else if (e is FirebaseAuthException &&
+          e.code == 'network-request-failed') {
+        throw const ServerException("No Internet Connection");
+      } else {
+        throw ServerException(e.toString());
+      }
     }
   }
 
@@ -71,7 +80,11 @@ class AuthRemoteSourceImpl implements AuthRemoteDataSource {
 
       return newUser;
     } catch (e) {
-      throw ServerException(e.toString());
+      if (e is FirebaseAuthException && e.code == 'network-request-failed') {
+        throw const ServerException("No Internet Connection");
+      } else {
+        throw ServerException(e.toString());
+      }
     }
   }
 
@@ -88,7 +101,11 @@ class AuthRemoteSourceImpl implements AuthRemoteDataSource {
         return null;
       }
     } catch (e) {
-      throw ServerException(e.toString());
+      if (e is FirebaseAuthException && e.code == 'network-request-failed') {
+        throw const ServerException("No Internet Connection");
+      } else {
+        throw ServerException(e.toString());
+      }
     }
   }
 
@@ -112,5 +129,43 @@ class AuthRemoteSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     await firebaseAuth.signOut();
+  }
+
+  @override
+  Future<void> deleteAccount({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await firebaseAuth.currentUser
+          ?.reauthenticateWithCredential(
+        EmailAuthProvider.credential(email: email, password: password),
+      )
+          .then((value) async {
+        await firebaseFirestore
+            .collection("users")
+            .doc(firebaseAuth.currentUser?.uid)
+            .delete();
+        await firebaseAuth.currentUser!.delete();
+      });
+    } catch (e) {
+      if (e is FirebaseAuthException && e.code == 'invalid-credential') {
+        throw const ServerException("Wrong Password");
+      } else if (e is FirebaseAuthException &&
+          e.code == 'network-request-failed') {
+        throw const ServerException("No Internet Connection");
+      } else {
+        throw ServerException(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<void> resetPassword({required String email}) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
   }
 }

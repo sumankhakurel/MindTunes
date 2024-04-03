@@ -1,17 +1,36 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/core/common/widgets/circular_avatar.dart';
+import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
+import 'package:mindtunes/core/utils/show_snacksbar.dart';
 import 'package:mindtunes/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mindtunes/features/auth/presentation/pages/login_page.dart';
+import 'package:mindtunes/features/auth/presentation/pages/reset_password.dart';
+import 'package:mindtunes/features/auth/presentation/widgets/auth_field.dart';
 
 import 'package:mindtunes/features/auth/presentation/widgets/auth_gradient_button.dart';
 
-class Profile extends StatelessWidget {
-  const Profile({super.key});
+class Profile extends StatefulWidget {
+  Profile({super.key});
+
+  @override
+  State<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+  final passwordController = TextEditingController();
+  final formkey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +38,15 @@ class Profile extends StatelessWidget {
         (context.read<AppUserCubit>().state as AppUserLoggedIn).user.name;
     final String email =
         (context.read<AppUserCubit>().state as AppUserLoggedIn).user.email;
+
     return SafeArea(
+      bottom: false,
       child: Scaffold(
         body: Column(
           children: [
             Container(
               width: double.infinity,
-              height: 150,
+              height: 140,
               decoration: const BoxDecoration(
                   color: AppPallete.navColour,
                   borderRadius: BorderRadius.only(
@@ -39,8 +60,7 @@ class Profile extends StatelessWidget {
                     const CircleAvatar(
                       radius: 40,
                       backgroundColor: AppPallete.whiteColor,
-                      backgroundImage:
-                          AssetImage('lib/core/assets/icons/user.png'),
+                      backgroundImage: AssetImage('assets/icons/user.png'),
                     ),
                     const VerticalDivider(
                       indent: 40,
@@ -93,7 +113,7 @@ class Profile extends StatelessWidget {
                         Column(
                           children: [
                             CustomCircularAvatar(
-                              imageurl: "lib/core/assets/icons/hourglass.png",
+                              imageurl: "assets/icons/hourglass.png",
                               boderColor: AppPallete.whiteColor,
                               insideColor: AppPallete.backgroundColor,
                             ),
@@ -111,7 +131,7 @@ class Profile extends StatelessWidget {
                         Column(
                           children: [
                             CustomCircularAvatar(
-                              imageurl: "lib/core/assets/icons/lotus.png",
+                              imageurl: "assets/icons/lotus.png",
                               boderColor: AppPallete.whiteColor,
                               insideColor: AppPallete.backgroundColor,
                             ),
@@ -135,7 +155,7 @@ class Profile extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10, right: 10),
               child: Container(
                 color: AppPallete.borderColor,
-                height: 200,
+                height: 180,
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -199,12 +219,93 @@ class Profile extends StatelessWidget {
                         ],
                       ),
                       const Divider(
-                        height: 40,
+                        height: 20,
                         thickness: 1,
                       ),
-                      const Text(
-                        "Delete Account",
-                        style: TextStyle(color: AppPallete.errorColor),
+                      GestureDetector(
+                        child: const Text(
+                          "Delete Account",
+                          style: TextStyle(color: AppPallete.errorColor),
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return BlocConsumer<AuthBloc, AuthState>(
+                                listener: (context, state) {
+                                  if (state is AuthFailure) {
+                                    showSnackBar(context, state.message);
+                                  } else if (state is AuthSuccess1) {
+                                    showSnackBar(context, state.message,
+                                        iserror: false);
+                                    Navigator.pushReplacement(
+                                        context, LoginPage.route());
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is AuthLoading) {
+                                    return const Loader();
+                                  }
+                                  return AlertDialog(
+                                      title: const Text(
+                                          "Enter Your Password for verification"),
+                                      actions: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Text("Cancel"),
+                                            ),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  if (formkey.currentState!
+                                                      .validate()) {
+                                                    context
+                                                        .read<AuthBloc>()
+                                                        .add(DeleteUser(
+                                                            email: email,
+                                                            password:
+                                                                passwordController
+                                                                    .text));
+                                                  }
+                                                },
+                                                child: Text("Confirm"))
+                                          ],
+                                        )
+                                      ],
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Form(
+                                            key: formkey,
+                                            child: AuthField(
+                                              icon: const Icon(
+                                                  CupertinoIcons.lock),
+                                              hintText: "Password",
+                                              controller: passwordController,
+                                              isObsecuteText: true,
+                                              action: TextInputAction.done,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Password is missing!";
+                                                } else if (value.length < 5) {
+                                                  return "Minimum password length is 5";
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ));
+                                },
+                              );
+                            },
+                          );
+                        },
                       ),
                       const Text(
                         "You can delete your account and data permanently",
@@ -218,14 +319,42 @@ class Profile extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 15),
             Padding(
-              padding: const EdgeInsets.all(20),
-              child: AuthGradientButton(
-                  buttonName: "Logout",
-                  onPress: () {
-                    context.read<AuthBloc>().add(AuthLogout());
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 15,
+                bottom: 10,
+              ),
+              child: BlocConsumer<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is AuthFailure) {
+                    showSnackBar(context, state.message);
+                  } else if (state is AuthSuccess1) {
+                    showSnackBar(context, state.message, iserror: false);
                     Navigator.pushReplacement(context, LoginPage.route());
-                  }),
+                  }
+                },
+                builder: (context, state) {
+                  return AuthGradientButton(
+                      buttonName: "Logout",
+                      onPress: () {
+                        context.read<AuthBloc>().add(AuthLogout());
+                      });
+                },
+              ),
+            ),
+            GestureDetector(
+              child: Text(
+                "Reset Password",
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppPallete.errorColor,
+                    ),
+              ),
+              onTap: () {
+                Navigator.push(context, ResetPassword.route());
+              },
             ),
           ],
         ),

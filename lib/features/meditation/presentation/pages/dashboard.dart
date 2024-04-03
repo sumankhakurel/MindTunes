@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
-import 'package:mindtunes/core/utils/show_snacksbar.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/chart.dart';
 
 class Dashboard extends StatelessWidget {
@@ -12,8 +9,6 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var bluStatus = "Connect To Device";
-    var data = 0;
     return Scaffold(
       backgroundColor: AppPallete.navColour,
       body: Padding(
@@ -71,55 +66,13 @@ class Dashboard extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppPallete.backgroundColor,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5.0)),
-                            ),
-                            child: BlocConsumer<MindwaveBloc, MindwaveState>(
-                              listener: (context, state) {
-                                if (state is MindwaveFailure) {
-                                  showSnackBar(context, state.message);
-                                  bluStatus = "Connect To Device";
-                                } else if (state is MindwaveSucess) {
-                                  bluStatus = state.message;
-                                }
-                              },
-                              builder: (context, state) {
-                                if (state is MindwaveLoading) {
-                                  return const Loader();
-                                }
-                                return GestureDetector(
-                                  onTap: () {
-                                    if (bluStatus != "connected") {
-                                      context
-                                          .read<MindwaveBloc>()
-                                          .add(Bluconnect());
-                                    } else {
-                                      //disconnect bloc
-                                    }
-                                  },
-                                  child: Text(
-                                    bluStatus,
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                          const BluButton(),
                         ],
                       ),
                       Expanded(
                         child: SizedBox(
                           height: 150,
-                          child: Image.asset(
-                              "lib/core/assets/icons/Meditation.png"),
+                          child: Image.asset("assets/icons/Meditation.png"),
                         ),
                       )
                     ],
@@ -200,40 +153,42 @@ class Dashboard extends StatelessWidget {
                               ),
                               Divider(),
                               Text("Band Power"),
-                              BlocConsumer<MindwaveBloc, MindwaveState>(
-                                listener: (context, state) {
-                                  if (state is MindwaveDataSuccess) {
-                                    data = state.data;
-                                  }
-                                },
-                                builder: (context, state) {
-                                  if (state is MindwaveLoading) {
-                                    return const Loader();
-                                  }
-                                  return GestureDetector(
-                                    onTap: () {
-                                      context
-                                          .read<MindwaveBloc>()
-                                          .add(GetRawSignal());
-                                    },
-                                    child: Text(
-                                      data.toString(),
-                                      style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
                               CustomLineChart(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("Alpha: 10"),
+                                  Text("Beta: 20"),
+                                  Text("Gamma: 300"),
+                                ],
+                              ),
+                              Divider(),
+                              Text("Attentation"),
+                              CustomLineChart(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("Current Attentation: 10"),
+                                ],
+                              ),
+                              Divider(),
+                              Text("Meditation"),
+                              CustomLineChart(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("Current Meditation: 10"),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 100,
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      Container(
-                        height: 300,
-                        // color: Color.fromARGB(255, 243, 33, 33),
                       ),
                     ],
                   ),

@@ -28,3 +28,16 @@ final class AuthLogin extends AuthEvent {
 final class AuthisUserloggedin extends AuthEvent {}
 
 final class AuthLogout extends AuthEvent {}
+
+final class DeleteUser extends AuthEvent {
+  final String email;
+  final String password;
+
+  DeleteUser({required this.email, required this.password});
+}
+
+final class AuthResetPassword extends AuthEvent {
+  final String email;
+
+  AuthResetPassword({required this.email});
+}

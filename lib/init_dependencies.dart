@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_mindwave_mobile_2/flutter_mindwave_mobile_2.dart';
+import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_source.dart';
@@ -12,7 +12,9 @@ import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_sourc
 import 'package:mindtunes/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:mindtunes/features/auth/domain/repository/auth_repository.dart';
 import 'package:mindtunes/features/auth/domain/usecases/current_user.dart';
+import 'package:mindtunes/features/auth/domain/usecases/delete_account.dart';
 import 'package:mindtunes/features/auth/domain/usecases/logout.dart';
+import 'package:mindtunes/features/auth/domain/usecases/reset_password.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_login.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:mindtunes/features/auth/presentation/bloc/auth_bloc.dart';
@@ -93,6 +95,14 @@ void _initAuth() {
         serviceLocator(),
       ),
     )
+    ..registerFactory(
+      () => DeleteAccount(
+        serviceLocator(),
+      ),
+    )
+    ..registerFactory(() => ResetPassword(
+          serviceLocator(),
+        ))
     ..registerLazySingleton(
       () => AuthBloc(
         userSignup: serviceLocator(),
@@ -100,6 +110,8 @@ void _initAuth() {
         currentUser: serviceLocator(),
         appUserCubit: serviceLocator(),
         logout: serviceLocator(),
+        deleteAccount: serviceLocator(),
+        resetPassword: serviceLocator(),
       ),
     )
     ..registerLazySingleton(

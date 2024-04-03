@@ -4,6 +4,8 @@ class AuthField extends StatelessWidget {
   final String hintText;
   final bool isObsecuteText;
   final TextEditingController controller;
+  final FormFieldValidator<String> validator;
+
   final TextInputAction action;
   final Icon icon;
   const AuthField({
@@ -13,6 +15,7 @@ class AuthField extends StatelessWidget {
     this.isObsecuteText = false,
     required this.action,
     required this.icon,
+    required this.validator,
   });
 
   @override
@@ -21,15 +24,12 @@ class AuthField extends StatelessWidget {
       controller: controller,
       textInputAction: action,
       decoration: InputDecoration(
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
         labelText: hintText,
         prefixIcon: icon,
       ),
-      validator: (value) {
-        if (value!.isEmpty) {
-          return "$hintText is missing!";
-        }
-        return null;
-      },
+      validator: validator,
       obscureText: isObsecuteText,
     );
   }

@@ -20,13 +20,13 @@ class _CustomLineChartState extends State<CustomLineChart> {
   final limitCount = 15;
 
   double x = 0;
-  double step = 0.05;
+  double step = 0.3;
 
   late Timer? timer;
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       while (_signalData.length > limitCount) {
         _signalData.removeAt(0);
       }
@@ -47,8 +47,8 @@ class _CustomLineChartState extends State<CustomLineChart> {
     setState(() {
       x += step;
 
-      _signalData.add(FlSpot(
-          x, _generateRandomSignalValue().toDouble())); // Add new data point
+      _signalData.add(FlSpot(x, _generateRandomSignalValue().toDouble()));
+      // Add new data point
 
       // Adjust visible range of x-axis to show last 10 seconds of data
     });
@@ -82,33 +82,6 @@ class _CustomLineChartState extends State<CustomLineChart> {
     );
   }
 
-  Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
-  }
-
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
@@ -135,7 +108,7 @@ class _CustomLineChartState extends State<CustomLineChart> {
         getDrawingVerticalLine: (value) {
           return const FlLine(
             color: AppPallete.gradient2,
-            strokeWidth: 1,
+            strokeWidth: 0,
           );
         },
       ),
@@ -149,10 +122,7 @@ class _CustomLineChartState extends State<CustomLineChart> {
         ),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            interval: 1,
-            getTitlesWidget: bottomTitleWidgets,
+            showTitles: false,
           ),
         ),
         leftTitles: AxisTitles(

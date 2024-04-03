@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_mindwave_mobile_2/flutter_mindwave_mobile_2.dart';
+import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:mindtunes/core/error/exceptions.dart';
 import 'package:mindtunes/features/meditation/data/data_sources/mindwave_data_source.dart';
 
