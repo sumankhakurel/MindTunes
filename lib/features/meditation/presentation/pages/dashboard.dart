@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/chart.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/test.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -24,7 +28,13 @@ class Dashboard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          //context.read<MindwaveBloc>().add(Bluconnect());
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => TestWeidget()));
+                        },
                         child: const Icon(
                           CupertinoIcons.add_circled_solid,
                           size: 30,
@@ -40,7 +50,9 @@ class Dashboard extends StatelessWidget {
                             ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          context.read<NavbarCubit>().updateindex(0);
+                        },
                         child: const Icon(
                           CupertinoIcons.person_crop_circle_fill,
                           size: 30,

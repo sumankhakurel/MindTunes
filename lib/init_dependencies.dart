@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:get_it/get_it.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_source_impl.dart';
@@ -18,13 +19,21 @@ import 'package:mindtunes/features/auth/domain/usecases/reset_password.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_login.dart';
 import 'package:mindtunes/features/auth/domain/usecases/user_sign_up.dart';
 import 'package:mindtunes/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:mindtunes/features/meditation/data/data_sources/firebase_data_source.dart';
+import 'package:mindtunes/features/meditation/data/data_sources/firebase_data_source_impl.dart';
 import 'package:mindtunes/features/meditation/data/data_sources/mindwave_data_source.dart';
 import 'package:mindtunes/features/meditation/data/data_sources/mindwave_data_source_impl.dart';
+import 'package:mindtunes/features/meditation/data/repository/firebase_repository_impl.dart';
 import 'package:mindtunes/features/meditation/data/repository/mindwave_repository_impl.dart';
+import 'package:mindtunes/features/meditation/domain/repository/firebase_repository.dart';
 import 'package:mindtunes/features/meditation/domain/repository/mindwave_repository.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/bluetooth_connect.dart';
+import 'package:mindtunes/features/meditation/domain/usecases/get_music.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/get_raw_eeg_data.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/firebasebloc/firebase_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/playerbloc/player_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 
 import 'package:mindtunes/firebase_options.dart';
 
@@ -37,6 +46,7 @@ Future<void> initDependicies() async {
 
   //core
   serviceLocator.registerLazySingleton(() => AppUserCubit());
+  serviceLocator.registerLazySingleton(() => NavbarCubit());
 }
 
 void _initAuth() {
@@ -103,6 +113,15 @@ void _initAuth() {
     ..registerFactory(() => ResetPassword(
           serviceLocator(),
         ))
+    ..registerFactory<FirebaseDataSource>(() => FirebaseDataSourceImpl(
+          FirebaseFirestore.instance,
+        ))
+    ..registerFactory<FirebaseRepository>(() => FirebaseRepositoryImpl(
+          serviceLocator(),
+        ))
+    ..registerFactory(() => GetMusic(
+          serviceLocator(),
+        ))
     ..registerLazySingleton(
       () => AuthBloc(
         userSignup: serviceLocator(),
@@ -119,5 +138,11 @@ void _initAuth() {
         bluetoothConnect: serviceLocator(),
         getRaweegData: serviceLocator(),
       ),
-    );
+    )
+    ..registerLazySingleton(() => FirebaseBloc(
+          getMusic: serviceLocator(),
+        ))
+    ..registerLazySingleton(() => PlayerBloc(
+          AudioPlayer(),
+        ));
 }

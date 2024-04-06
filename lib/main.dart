@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/firebasebloc/firebase_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/playerbloc/player_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 
 import 'package:mindtunes/nav_bar.dart';
 
@@ -25,6 +27,9 @@ void main() async {
       BlocProvider(
         create: (_) => serviceLocator<MindwaveBloc>(),
       ),
+      BlocProvider(create: (_) => serviceLocator<FirebaseBloc>()),
+      BlocProvider(create: (_) => serviceLocator<NavbarCubit>()),
+      BlocProvider(create: (_) => serviceLocator<PlayerBloc>()),
     ],
     child: const MyApp(),
   ));

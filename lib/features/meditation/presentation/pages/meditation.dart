@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
-import 'package:mindtunes/features/meditation/presentation/pages/meditationlive.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/meditation_musics.dart';
 
 class Meditation extends StatelessWidget {
   const Meditation({super.key});
@@ -31,7 +33,9 @@ class Meditation extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          context.read<MindwaveBloc>().add(Bluconnect());
+                        },
                         child: const Icon(CupertinoIcons.add_circled_solid,
                             size: 30, color: AppPallete.navColour),
                       ),
@@ -45,7 +49,9 @@ class Meditation extends StatelessWidget {
                                 color: AppPallete.navColour),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          context.read<NavbarCubit>().updateindex(0);
+                        },
                         child: const Icon(
                             CupertinoIcons.person_crop_circle_fill,
                             size: 30,
@@ -85,108 +91,7 @@ class Meditation extends StatelessWidget {
                         Radius.circular(20),
                       ),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(13.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Select Music to start Meditation",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Embrace the stillness within. Let go of the chaos without. Find peace in the rhythm of your breath.",
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(
-                                  color: AppPallete.lightColor,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                          ),
-                          SizedBox(
-                            height: 210,
-                            child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                // shrinkWrap: true,
-                                itemCount: 20,
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, position) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MeditationLive(
-                                                      title: position
-                                                          .toString())));
-                                    },
-                                    child: Card(
-                                      clipBehavior: Clip.hardEdge,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            constraints: const BoxConstraints(
-                                                minHeight: 150),
-                                            height: 150,
-                                            width: 200,
-                                            color: AppPallete.errorColor,
-                                            child: Image.asset(
-                                              "assets/images/meditation.jpg",
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 200,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Expanded(
-                                                    flex: 3,
-                                                    child: Text(
-                                                      "Meditation",
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                      child: Text(
-                                                    "15:00",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelSmall
-                                                        ?.copyWith(
-                                                            color: AppPallete
-                                                                .lightColor),
-                                                    textAlign: TextAlign.end,
-                                                  )),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: const MeditationMusics(),
                   ),
                 ),
                 Padding(

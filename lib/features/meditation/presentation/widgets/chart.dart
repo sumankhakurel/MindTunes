@@ -26,19 +26,19 @@ class _CustomLineChartState extends State<CustomLineChart> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      while (_signalData.length > limitCount) {
-        _signalData.removeAt(0);
-      }
-      setState(() {
-        _updateSignalValue(timer);
-      });
-    });
+    // timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    //   while (_signalData.length > limitCount) {
+    //     _signalData.removeAt(0);
+    //   }
+    //   setState(() {
+    //     _updateSignalValue(timer);
+    //   });
+    // });
   }
 
   @override
   void dispose() {
-    timer?.cancel(); // Cancel timer when widget is disposed
+    //timer?.cancel(); // Cancel timer when widget is disposed
     super.dispose();
   }
 

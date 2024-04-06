@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/core/utils/show_snacksbar.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/bloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
 
 class BluButton extends StatelessWidget {
   const BluButton({super.key});

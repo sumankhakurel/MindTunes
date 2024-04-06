@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:fpdart/fpdart.dart';
-import 'package:mindtunes/core/common/entities/user.dart';
 import 'package:mindtunes/core/error/failure.dart';
 import 'package:mindtunes/core/usecase/usecase.dart';
 import 'package:mindtunes/features/auth/domain/repository/auth_repository.dart';

@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:fpdart/fpdart.dart';
 import 'package:mindtunes/core/error/failure.dart';
 import 'package:mindtunes/core/common/entities/user.dart';

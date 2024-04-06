@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:logger/logger.dart';
+
 import 'package:mindtunes/core/error/exceptions.dart';
 import 'package:mindtunes/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:mindtunes/features/auth/data/models/user_model.dart';
