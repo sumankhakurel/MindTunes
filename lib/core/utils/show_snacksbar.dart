@@ -37,7 +37,7 @@ void showSnackBar(BuildContext context, String content, {bool iserror = true}) {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          iserror ? "Error Occur" : "Sucessfull",
+                          iserror ? "Error Occur" : "Successful",
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge

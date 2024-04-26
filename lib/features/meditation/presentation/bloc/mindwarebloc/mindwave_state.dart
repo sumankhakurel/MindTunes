@@ -7,10 +7,10 @@ final class MindwaveInitial extends MindwaveState {}
 
 final class MindwaveLoading extends MindwaveState {}
 
-final class MindwaveSucess extends MindwaveState {
-  final String message;
+final class MindwaveSuccess extends MindwaveState {
+  final MWMConnectionState message;
 
-  MindwaveSucess(this.message);
+  MindwaveSuccess(this.message);
 }
 
 final class MindwaveFailure extends MindwaveState {

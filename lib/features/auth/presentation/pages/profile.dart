@@ -14,6 +14,7 @@ import 'package:mindtunes/features/auth/presentation/pages/reset_password.dart';
 import 'package:mindtunes/features/auth/presentation/widgets/auth_field.dart';
 
 import 'package:mindtunes/features/auth/presentation/widgets/auth_gradient_button.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/firebasedataBloc/bloc/firebasedata_bloc.dart';
 
 class Profile extends StatefulWidget {
   Profile({super.key});
@@ -97,13 +98,13 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             const SizedBox(height: 10),
-            const Padding(
-              padding: EdgeInsets.all(20),
+            Padding(
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("All Meditations"),
-                  SizedBox(
+                  const Text("All Meditations"),
+                  const SizedBox(
                     height: 15,
                   ),
                   IntrinsicHeight(
@@ -112,34 +113,40 @@ class _ProfileState extends State<Profile> {
                       children: [
                         Column(
                           children: [
-                            CustomCircularAvatar(
+                            const CustomCircularAvatar(
                               imageurl: "assets/icons/hourglass.png",
                               boderColor: AppPallete.whiteColor,
                               insideColor: AppPallete.backgroundColor,
                             ),
                             Text(
-                              "0",
-                              style: TextStyle(fontSize: 30),
+                              (context.read<FirebasedataBloc>().state
+                                      as FirebasedataSucess)
+                                  .totalminutes
+                                  .toStringAsFixed(2),
+                              style: const TextStyle(fontSize: 30),
                             ),
-                            Text("Total Minutes"),
+                            const Text("Total Minutes"),
                           ],
                         ),
-                        VerticalDivider(
+                        const VerticalDivider(
                           color: Colors.amber,
                           thickness: 1,
                         ),
                         Column(
                           children: [
-                            CustomCircularAvatar(
+                            const CustomCircularAvatar(
                               imageurl: "assets/icons/lotus.png",
                               boderColor: AppPallete.whiteColor,
                               insideColor: AppPallete.backgroundColor,
                             ),
                             Text(
-                              "0",
-                              style: TextStyle(fontSize: 30),
+                              (context.read<FirebasedataBloc>().state
+                                      as FirebasedataSucess)
+                                  .totalsessions
+                                  .toString(),
+                              style: const TextStyle(fontSize: 30),
                             ),
-                            Text("Total Session"),
+                            const Text("Total Session"),
                           ],
                         ),
                       ],
@@ -258,7 +265,7 @@ class _ProfileState extends State<Profile> {
                                               onPressed: () {
                                                 Navigator.pop(context);
                                               },
-                                              child: Text("Cancel"),
+                                              child: const Text("Cancel"),
                                             ),
                                             ElevatedButton(
                                                 onPressed: () {
@@ -273,7 +280,7 @@ class _ProfileState extends State<Profile> {
                                                                     .text));
                                                   }
                                                 },
-                                                child: Text("Confirm"))
+                                                child: const Text("Confirm"))
                                           ],
                                         )
                                       ],

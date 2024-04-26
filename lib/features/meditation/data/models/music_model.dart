@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:just_audio/just_audio.dart';
+
 import 'package:mindtunes/features/meditation/domain/entities/music.dart';
 
 class MusicModel extends Music {

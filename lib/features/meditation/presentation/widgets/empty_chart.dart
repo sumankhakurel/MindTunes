@@ -1,73 +1,16 @@
-import 'dart:async';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 
-class CustomLineChart extends StatefulWidget {
-  final Stream<dynamic>? data;
-  final bool isbandpower;
-  const CustomLineChart(
-      {super.key, required this.data, this.isbandpower = false});
+class CustomEmptyLineChart extends StatelessWidget {
+  CustomEmptyLineChart({super.key});
 
-  @override
-  State<CustomLineChart> createState() => _CustomLineChartState();
-}
-
-class _CustomLineChartState extends State<CustomLineChart> {
-  List<Color> gradientColors = [AppPallete.gradient1, AppPallete.gradient2];
+  final List<Color> gradientColors = [
+    AppPallete.gradient1,
+    AppPallete.gradient2
+  ];
 
   final List<FlSpot> _signalData = [];
-  final limitCount = 15;
-
-  double x = 0;
-  double step = 0.3;
-
-  @override
-  void initState() {
-    super.initState();
-
-    widget.data!.listen((dynamic data) {
-      if (mounted) {
-        while (_signalData.length > limitCount) {
-          _signalData.removeAt(0);
-        }
-        setState(() {
-          if (widget.isbandpower) {
-            if (data != null) {
-              var bandpower = data as BandPower;
-              _updateSignalValue(bandpower.alpha);
-            }
-          } else {
-            if (data != null) {
-              _updateSignalValue(data.toDouble());
-            }
-          }
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  // Function to update signal value
-  void _updateSignalValue(double data) {
-    setState(() {
-      x += step;
-      double y;
-      if (widget.isbandpower) {
-        y = data / 2;
-      } else {
-        y = data / 10;
-      }
-
-      _signalData.add(FlSpot(x, y));
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

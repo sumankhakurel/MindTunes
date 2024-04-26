@@ -1,3 +1,4 @@
+import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mindtunes/core/error/exceptions.dart';
 import 'package:mindtunes/core/error/failure.dart';
@@ -9,13 +10,15 @@ class MindwaveRepositoryImpl implements MindwaveRepository {
 
   MindwaveRepositoryImpl(this.mindwaveDataSource);
   @override
-  Future<Either<Failure, String>> connectToBluetooth() async {
+  Stream<Either<Failure, MWMConnectionState>> connectToBluetooth() async* {
     try {
-      final result = await mindwaveDataSource.bluetoothConnect();
-      return right(result);
-    } on ServerException catch (e) {
-      print(e.message);
-      return left(Failure(e.message));
+      yield* mindwaveDataSource.bluetoothConnect().map((state) {
+        print("State: $state");
+        return Right(state);
+      });
+    } catch (e) {
+      print("messagee: $e");
+      yield left(Failure());
     }
   }
 

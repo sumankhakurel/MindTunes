@@ -23,15 +23,26 @@ import 'package:mindtunes/features/meditation/data/data_sources/firebase_data_so
 import 'package:mindtunes/features/meditation/data/data_sources/firebase_data_source_impl.dart';
 import 'package:mindtunes/features/meditation/data/data_sources/mindwave_data_source.dart';
 import 'package:mindtunes/features/meditation/data/data_sources/mindwave_data_source_impl.dart';
+import 'package:mindtunes/features/meditation/data/data_sources/mindwave_device_data_source.dart';
+import 'package:mindtunes/features/meditation/data/data_sources/mindwave_device_data_source_impl.dart';
 import 'package:mindtunes/features/meditation/data/repository/firebase_repository_impl.dart';
+import 'package:mindtunes/features/meditation/data/repository/mindwave_device_repository_impl.dart';
 import 'package:mindtunes/features/meditation/data/repository/mindwave_repository_impl.dart';
 import 'package:mindtunes/features/meditation/domain/repository/firebase_repository.dart';
+import 'package:mindtunes/features/meditation/domain/repository/mindwave_device_repository.dart';
 import 'package:mindtunes/features/meditation/domain/repository/mindwave_repository.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/bluetooth_connect.dart';
+import 'package:mindtunes/features/meditation/domain/usecases/get_meditation_history.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/get_music.dart';
 import 'package:mindtunes/features/meditation/domain/usecases/get_raw_eeg_data.dart';
+import 'package:mindtunes/features/meditation/domain/usecases/mindwave_device_disconnect.dart';
+import 'package:mindtunes/features/meditation/domain/usecases/scan_mindwave_device.dart';
+import 'package:mindtunes/features/meditation/domain/usecases/update_meditation_session.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/firebasebloc/firebase_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/firebasedataBloc/bloc/firebasedata_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/meditationbloc/bloc/meditation_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/playerbloc/player_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 
@@ -87,7 +98,6 @@ void _initAuth() {
         FlutterBlue.instance,
         FlutterMindWaveMobile2(),
         MWMConnectionState.disconnected,
-        null,
       ),
     )
     ..registerFactory<MindwaveRepository>(
@@ -115,12 +125,37 @@ void _initAuth() {
         ))
     ..registerFactory<FirebaseDataSource>(() => FirebaseDataSourceImpl(
           FirebaseFirestore.instance,
+          FirebaseAuth.instance,
         ))
     ..registerFactory<FirebaseRepository>(() => FirebaseRepositoryImpl(
           serviceLocator(),
         ))
     ..registerFactory(() => GetMusic(
           serviceLocator(),
+        ))
+    ..registerFactory<MindwaveDeviceDataSource>(
+        () => MindwaveDeviceDataSourceImpl(
+              FlutterBlue.instance,
+            ))
+    ..registerFactory<MindwaveDeviceRepository>(
+        () => MindwaveDeviceRepositoryImpl(
+              serviceLocator(),
+            ))
+    ..registerFactory(() => ScanMindwaveDevice(
+          serviceLocator(),
+        ))
+    ..registerFactory(() => UpdateMeditationSession(
+          serviceLocator(),
+        ))
+    ..registerFactory(() => MindwaveDeviceDisconnect(
+          serviceLocator(),
+        ))
+    ..registerFactory(() => GetMeditationHistory(
+          serviceLocator(),
+        ))
+    ..registerLazySingleton(() => MindwavedeviceBloc(
+          mindwaveDevice: serviceLocator(),
+          mindwaveDeviceDisconnect: serviceLocator(),
         ))
     ..registerLazySingleton(
       () => AuthBloc(
@@ -133,6 +168,9 @@ void _initAuth() {
         resetPassword: serviceLocator(),
       ),
     )
+    ..registerLazySingleton(() => MeditationBloc(
+          meditationSession: serviceLocator(),
+        ))
     ..registerLazySingleton(
       () => MindwaveBloc(
         bluetoothConnect: serviceLocator(),
@@ -144,5 +182,8 @@ void _initAuth() {
         ))
     ..registerLazySingleton(() => PlayerBloc(
           AudioPlayer(),
+        ))
+    ..registerLazySingleton(() => FirebasedataBloc(
+          getMeditationHistory: serviceLocator(),
         ));
 }

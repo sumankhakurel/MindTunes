@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
+import 'package:mindtunes/core/utils/show_snacksbar.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/meditation_musics.dart';
@@ -71,10 +73,31 @@ class Meditation extends StatelessWidget {
                       .bodyLarge!
                       .copyWith(fontWeight: FontWeight.bold),
                 ),
-                const Row(
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    BluButton(),
+                    BlocConsumer<MindwavedeviceBloc, MindwavedeviceState>(
+                      listener: (context, state) {
+                        if (state is MindwavedeviceScanFail) {
+                          showSnackBar(context, state.message);
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is MindwavedeviceLoadingState) {
+                          return const BluButton(
+                            bluStatus: "Connecting",
+                          );
+                        } else if (state is MindwavedeviceSucess) {
+                          return BluButton(
+                            bluStatus: state.status,
+                          );
+                        } else {
+                          return const BluButton(
+                            bluStatus: "Disconnected",
+                          );
+                        }
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(

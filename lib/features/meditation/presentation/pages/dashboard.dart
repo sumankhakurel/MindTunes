@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_mindwave_mobile_2_plugin/flutter_mindwave_mobile_2.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
+import 'package:mindtunes/core/utils/show_snacksbar.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/chart.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/empty_chart.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/meditation_history.dart';
+import 'package:mindtunes/features/meditation/presentation/widgets/signal_bar.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/test.dart';
 
 class Dashboard extends StatelessWidget {
@@ -33,7 +38,7 @@ class Dashboard extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => TestWeidget()));
+                                  builder: (context) => const TestWeidget()));
                         },
                         child: const Icon(
                           CupertinoIcons.add_circled_solid,
@@ -78,7 +83,28 @@ class Dashboard extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
-                          const BluButton(),
+                          BlocConsumer<MindwavedeviceBloc, MindwavedeviceState>(
+                            listener: (context, state) {
+                              if (state is MindwavedeviceScanFail) {
+                                showSnackBar(context, state.message);
+                              }
+                            },
+                            builder: (context, state) {
+                              if (state is MindwavedeviceLoadingState) {
+                                return const BluButton(
+                                  bluStatus: "Connecting",
+                                );
+                              } else if (state is MindwavedeviceSucess) {
+                                return BluButton(
+                                  bluStatus: state.status,
+                                );
+                              } else {
+                                return const BluButton(
+                                  bluStatus: "Disconnected",
+                                );
+                              }
+                            },
+                          ),
                         ],
                       ),
                       Expanded(
@@ -125,77 +151,175 @@ class Dashboard extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                               ),
+                              BlocBuilder<MindwavedeviceBloc,
+                                  MindwavedeviceState>(
+                                builder: (context, state) {
+                                  if (state is MindwavedeviceSucess) {
+                                    return StreamBuilder<dynamic>(
+                                        stream: state.signal,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            return SignalBar(
+                                              data: snapshot.data,
+                                            );
+                                          } else {
+                                            return const SignalBar(
+                                              data: 200,
+                                            );
+                                          }
+                                        });
+                                  } else {
+                                    return const SignalBar(
+                                      data: 200,
+                                    );
+                                  }
+                                },
+                              ),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Row(
-                                children: [
-                                  const Text("Device Signal"),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    width: 200,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: AppPallete.borderColor),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: LinearProgressIndicator(
-                                        value: 150 /
-                                            200, // Convert signal strength to progress value (0-1)
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                          _getColor(
-                                              90), // Get color based on signal strength
-                                        ),
-                                        backgroundColor: Colors
-                                            .grey[300], // Background color
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  const Text("150")
-                                ],
+                              const Divider(),
+                              const Text("Band Power"),
+                              BlocBuilder<MindwavedeviceBloc,
+                                  MindwavedeviceState>(
+                                builder: (context, state) {
+                                  if (state is MindwavedeviceSucess) {
+                                    return CustomLineChart(
+                                      data: state.bandpower,
+                                      isbandpower: true,
+                                    );
+                                  } else {
+                                    return CustomEmptyLineChart();
+                                  }
+                                },
                               ),
-                              Divider(),
-                              Text("Band Power"),
-                              CustomLineChart(),
+                              BlocBuilder<MindwavedeviceBloc,
+                                  MindwavedeviceState>(
+                                builder: (context, state) {
+                                  if (state is MindwavedeviceSucess) {
+                                    return StreamBuilder<dynamic>(
+                                        stream: state.bandpower,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            var bandPower =
+                                                snapshot.data as BandPower;
+                                            return Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text(
+                                                    "Alpha: ${bandPower.alpha.toStringAsFixed(2)}"),
+                                                Text(
+                                                    "Beta: ${bandPower.beta.toStringAsFixed(2)}"),
+                                                Text(
+                                                    "Gamma: ${bandPower.gamma.toStringAsFixed(2)}"),
+                                              ],
+                                            );
+                                          } else {
+                                            return const Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              children: [
+                                                Text("Alpha: 0"),
+                                                Text("Beta: 0"),
+                                                Text("Gamma: 0"),
+                                              ],
+                                            );
+                                          }
+                                        });
+                                  } else {
+                                    return const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Text("Alpha: 0"),
+                                        Text("Beta: 0"),
+                                        Text("Gamma: 0"),
+                                      ],
+                                    );
+                                  }
+                                },
+                              ),
+                              const Divider(),
+                              const Text("Attentation"),
+                              BlocBuilder<MindwavedeviceBloc,
+                                  MindwavedeviceState>(
+                                builder: (context, state) {
+                                  if (state is MindwavedeviceSucess) {
+                                    return CustomLineChart(data: state.attdata);
+                                  } else {
+                                    return CustomEmptyLineChart();
+                                  }
+                                },
+                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text("Alpha: 10"),
-                                  Text("Beta: 20"),
-                                  Text("Gamma: 300"),
+                                  BlocBuilder<MindwavedeviceBloc,
+                                      MindwavedeviceState>(
+                                    builder: (context, state) {
+                                      if (state is MindwavedeviceSucess) {
+                                        return StreamBuilder<dynamic>(
+                                            stream: state.attdata,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                return Text(
+                                                    "Current Attentation: ${snapshot.data}");
+                                              } else {
+                                                return const Text(
+                                                    "Current Attentation: 0");
+                                              }
+                                            });
+                                      } else {
+                                        return const Text(
+                                            "Current Attentation: 0");
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
-                              Divider(),
-                              Text("Attentation"),
-                              CustomLineChart(),
+                              const Divider(),
+                              const Text("Meditation"),
+                              BlocBuilder<MindwavedeviceBloc,
+                                  MindwavedeviceState>(
+                                builder: (context, state) {
+                                  if (state is MindwavedeviceSucess) {
+                                    return CustomLineChart(data: state.meddata);
+                                  } else {
+                                    return CustomEmptyLineChart();
+                                  }
+                                },
+                              ),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceAround,
                                 children: [
-                                  Text("Current Attentation: 10"),
+                                  BlocBuilder<MindwavedeviceBloc,
+                                      MindwavedeviceState>(
+                                    builder: (context, state) {
+                                      if (state is MindwavedeviceSucess) {
+                                        return StreamBuilder<dynamic>(
+                                            stream: state.meddata,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                return Text(
+                                                    "Current Meditation: ${snapshot.data}");
+                                              } else {
+                                                return const Text(
+                                                    "Current Meditation: 0");
+                                              }
+                                            });
+                                      } else {
+                                        return const Text(
+                                            "Current Meditation: 0");
+                                      }
+                                    },
+                                  ),
                                 ],
                               ),
-                              Divider(),
-                              Text("Meditation"),
-                              CustomLineChart(),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text("Current Meditation: 10"),
-                                ],
-                              ),
-                              SizedBox(
+                              const MeditationHistory(),
+                              const SizedBox(
                                 height: 100,
                               ),
                             ],
@@ -211,17 +335,5 @@ class Dashboard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color _getColor(double strength) {
-    if (strength >= 75) {
-      return Colors.green; // Strong signal (75-100)
-    } else if (strength >= 50) {
-      return Colors.yellow; // Moderate signal (50-74)
-    } else if (strength >= 25) {
-      return Colors.orange; // Weak signal (25-49)
-    } else {
-      return Colors.red; // Very weak signal (0-24)
-    }
   }
 }

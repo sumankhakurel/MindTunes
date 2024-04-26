@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/widgets/loader.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/firebasebloc/firebase_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/meditationbloc/bloc/meditation_bloc.dart';
+import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/playerbloc/player_bloc.dart';
-import 'package:mindtunes/features/meditation/presentation/pages/meditation_Player.dart';
+import 'package:mindtunes/features/meditation/presentation/pages/meditation_player.dart';
 
 class MeditationMusics extends StatefulWidget {
   const MeditationMusics({
@@ -58,17 +60,91 @@ class _MeditationMusicsState extends State<MeditationMusics> {
                       itemBuilder: (context, position) {
                         return GestureDetector(
                           onTap: () {
-                            context.read<PlayerBloc>().add(
-                                  PlayEvent(
-                                    music: state.musics[position],
-                                  ),
-                                );
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MeditationPlayer(
-                                          music: state.musics[position],
-                                        )));
+                            final devicestate =
+                                context.read<MindwavedeviceBloc>().state;
+                            if (!(devicestate is MindwavedeviceSucess &&
+                                devicestate.status == "Connected")) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                        "Device not Connected",
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall
+                                            ?.copyWith(
+                                              fontSize: 20,
+                                            ),
+                                      ),
+                                    );
+                                  });
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                        "Start New Session",
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall
+                                            ?.copyWith(
+                                              fontSize: 20,
+                                            ),
+                                      ),
+                                      actions: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Cancel"),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        AppPallete.greenColor),
+                                                onPressed: () {
+                                                  context
+                                                      .read<PlayerBloc>()
+                                                      .add(
+                                                        PlayEvent(
+                                                          music: state
+                                                              .musics[position],
+                                                        ),
+                                                      );
+
+                                                  context
+                                                      .read<MeditationBloc>()
+                                                      .add(
+                                                          MeditationStartEvent());
+                                                  Navigator.pop(context);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              MeditationPlayer(
+                                                                music: state
+                                                                        .musics[
+                                                                    position],
+                                                              )));
+                                                },
+                                                child: const Text("Start"))
+                                          ],
+                                        )
+                                      ],
+                                    );
+                                  });
+                            }
                           },
                           child: Card(
                             clipBehavior: Clip.hardEdge,
