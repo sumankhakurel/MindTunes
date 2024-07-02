@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/core/theme/app_pallet.dart';
 import 'package:mindtunes/core/utils/show_snacksbar.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/widgets/button.dart';
@@ -36,7 +35,9 @@ class Meditation extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          context.read<MindwaveBloc>().add(Bluconnect());
+                          context
+                              .read<MindwavedeviceBloc>()
+                              .add(MindwavedeviceScanEvent());
                         },
                         child: const Icon(CupertinoIcons.add_circled_solid,
                             size: 30, color: AppPallete.navColour),

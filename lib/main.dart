@@ -4,7 +4,6 @@ import 'package:mindtunes/core/common/cubits/app_user/app_user_cubit.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/firebasebloc/firebase_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/firebasedataBloc/bloc/firebasedata_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/meditationbloc/bloc/meditation_bloc.dart';
-import 'package:mindtunes/features/meditation/presentation/bloc/mindwarebloc/mindwave_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/mindwavedevicebloc/mindwavedevice_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/bloc/playerbloc/player_bloc.dart';
 import 'package:mindtunes/features/meditation/presentation/cubit/navbar_cubit.dart';
@@ -23,7 +22,6 @@ void main() async {
     providers: [
       BlocProvider(create: (_) => serviceLocator<AppUserCubit>()),
       BlocProvider(create: (_) => serviceLocator<AuthBloc>()),
-      BlocProvider(create: (_) => serviceLocator<MindwaveBloc>()),
       BlocProvider(create: (_) => serviceLocator<FirebaseBloc>()),
       BlocProvider(create: (_) => serviceLocator<NavbarCubit>()),
       BlocProvider(create: (_) => serviceLocator<PlayerBloc>()),

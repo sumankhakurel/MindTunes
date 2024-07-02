@@ -34,11 +34,14 @@ class Dashboard extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          context
+                              .read<MindwavedeviceBloc>()
+                              .add(MindwavedeviceScanEvent());
                           //context.read<MindwaveBloc>().add(Bluconnect());
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const TestWeidget()));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => const TestWeidget()));
                         },
                         child: const Icon(
                           CupertinoIcons.add_circled_solid,
